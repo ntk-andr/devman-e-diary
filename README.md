@@ -10,5 +10,5 @@ Devman 2.0. Знакомство с Django: ORM.
 
 
 ### Запуск скрипта на работающем сайте
- `python main.py`
+ `python scripts.py`
 

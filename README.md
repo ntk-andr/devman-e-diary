@@ -10,5 +10,37 @@ Devman 2.0. Знакомство с Django: ORM.
 
 
 ### Запуск скрипта на работающем сайте
- `python scripts.py`
+- поместить файл `scripts.py` на один уровень с файлом `manage.py` проекта
+- запустить скрипт командой `python scripts.py`
+
+### Примеры запуска скрипта
+- Получение учетной записи.
+```bash
+from scripts import find_schoolkid
+full_name = 'Фролов Иван'
+schoolkid = find_schoolkid(child_name)
+print(schoolkid) 
+```
+
+- Исправление всех плохих оценок на пятерки.
+```bash
+from scripts import find_schoolkid, fix_marks
+full_name = 'Фролов Иван'
+schoolkid = find_schoolkid(child_name)
+fix_marks(schoolkid)
+```
+- Удаление замечаний учителей.
+```bash
+from scripts import find_schoolkid, remove_chastisements
+full_name = 'Фролов Иван'
+schoolkid = find_schoolkid(child_name)
+remove_chastisements(schoolkid)
+```
+- Создание похвалы.
+```bash
+from scripts import find_schoolkid, create_commendation
+full_name = 'Фролов Иван'
+schoolkid = find_schoolkid(child_name)
+create_commendation(schoolkid, 'Математика')
+```
 

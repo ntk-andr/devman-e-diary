@@ -21,10 +21,10 @@ all_commendations = [
 ]
 
 
-def exceptDecorator(func):
+def error_catcher(func):
     def wrapper(*args):
         try:
-            func(*args)
+            return func(*args)
         except Schoolkid.DoesNotExist:
             print(f'пользователя {args[0]} не существует')
         except AttributeError:
@@ -33,71 +33,36 @@ def exceptDecorator(func):
     return wrapper
 
 
-def all_schoolkids() -> list:
+@error_catcher
+def get_schoolkid(full_name: str) -> Schoolkid:
     """
-    Все ученики
-    """
-    return Schoolkid.objects.all()
+    Поиск учетной записи.
 
-
-@exceptDecorator
-def find_schoolkid(full_name):
+    :param full_name: ФИО ученика
+    :return Schoolkid:
     """
-    Поиск учетной записи
-    """
-    # try:
     return Schoolkid.objects.get(full_name__contains=full_name)
-    # except Schoolkid.DoesNotExist:
-    #     print(f'пользователя {full_name} не существует')
 
 
-@exceptDecorator
-def find_marks(schoolkid: Schoolkid):
-    """
-    Поиск оценок ученика
-    """
-    return Mark.objects.filter(schoolkid__full_name__contains=schoolkid.full_name)
-
-
-@exceptDecorator
-def find_bad_points(schoolkid: Schoolkid):
-    """
-    Поиск плохих оценок ученика
-    """
-    return Mark.objects.filter(schoolkid=schoolkid, points__in=[2, 3])
-
-
-@exceptDecorator
-def fix_first_bad_point(schoolkid: Schoolkid):
-    """
-    Исправление первой плохой оценки
-    """
-    bad_points = Mark.objects.get(schoolkid=schoolkid, points__in=[2, 3])
-    bad_points.points = 5
-    bad_points.save()
-
-
-@exceptDecorator
+@error_catcher
 def fix_marks(schoolkid: Schoolkid):
     """
-    Исправление всех плохих оценок на пятерки
+    Исправление всех плохих оценок на пятерки.
+
+    :param schoolkid: модель ученика
+    :return: no value
     """
     bad_points = Mark.objects.filter(schoolkid=schoolkid, points__in=[2, 3])
     bad_points.update(points=5)
 
 
-@exceptDecorator
-def find_chastisements(schoolkid: Schoolkid):
-    """
-    Поиск замечаний ученика
-    """
-    return Chastisement.objects.filter(schoolkid=schoolkid)
-
-
-@exceptDecorator
+@error_catcher
 def remove_chastisements(schoolkid: Schoolkid):
     """
-    Удаление замечаний учителей
+    Удаление замечаний учителей.
+
+    :param schoolkid: модель ученика
+    :return: no value
     """
     chastisements = Chastisement.objects.filter(schoolkid=schoolkid)
     chastisements_count = chastisements.count()
@@ -105,38 +70,19 @@ def remove_chastisements(schoolkid: Schoolkid):
     print(f'удалено {chastisements_count} объектов')
 
 
-@exceptDecorator
-def find_all_lessons(schoolkid: Schoolkid):
+@error_catcher
+def create_commendation(schoolkid: Schoolkid, subject='Математика'):
     """
-    Поиск всех занятий ученика
-    """
-    return Lesson.objects.filter(
-        year_of_study=schoolkid.year_of_study,
-        group_letter=schoolkid.group_letter,
-    )
+    Создание похвалы.
 
-
-@exceptDecorator
-def find_lessons(schoolkid: Schoolkid, subject='Математика'):
-    """
-    Поиск всех занятий ученика по предмету
-    """
-    return Lesson.objects.filter(
-        year_of_study=schoolkid.year_of_study,
-        group_letter=schoolkid.group_letter,
-        subject__title=subject.title
-    )
-
-
-@exceptDecorator
-def create_commendation(schoolkid: Schoolkid, subject_title='Математика'):
-    """
-    Создание похвалы
+    :param schoolkid: модель ученика
+    :param subject: название предмета
+    :return: no value
     """
     lessons = Lesson.objects.filter(
         year_of_study=schoolkid.year_of_study,
         group_letter=schoolkid.group_letter,
-        subject__title=subject_title,
+        subject__title=subject,
     ).order_by('date')
 
     count_lessons = lessons.count()
@@ -150,11 +96,3 @@ def create_commendation(schoolkid: Schoolkid, subject_title='Математик�
         subject=lesson.subject,
         teacher=lesson.teacher,
     )
-
-
-if __name__ == '__main__':
-    child_name = 'Фролов Иван'
-    schoolkid = find_schoolkid(child_name)
-    fix_marks(schoolkid)
-    remove_chastisements(schoolkid)
-    create_commendation(schoolkid, 'Математика')

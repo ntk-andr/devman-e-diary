@@ -14,30 +14,32 @@ Devman 2.0. Знакомство с Django: ORM.
 - запустить скрипт командой `python scripts.py`
 
 ### Примеры запуска скрипта
-- Получение учетной записи.
 
-```from scripts import find_schoolkid
+- Получение учетной записи.
+```python
+from scripts import find_schoolkid
 full_name = 'Фролов Иван'
 schoolkid = find_schoolkid(child_name)
 print(schoolkid) 
 ```
 
 - Исправление всех плохих оценок на пятерки.
-```from scripts import find_schoolkid, fix_marks
+```python
+from scripts import find_schoolkid, fix_marks
 full_name = 'Фролов Иван'
 schoolkid = find_schoolkid(child_name)
 fix_marks(schoolkid)
 ```
 
 - Удаление замечаний учителей.
-```from scripts import find_schoolkid, remove_chastisements
+```python
+from scripts import find_schoolkid, remove_chastisements
 full_name = 'Фролов Иван'
 schoolkid = find_schoolkid(child_name)
 remove_chastisements(schoolkid)
 ```
 
 - Создание похвалы.
-
 ```python
 from scripts import find_schoolkid, create_commendation
 full_name = 'Фролов Иван'

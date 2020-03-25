@@ -21,7 +21,7 @@ all_commendations = [
 ]
 
 
-def error_catcher(func):
+def explain_errors(func):
     def wrapper(*args):
         try:
             return func(*args)
@@ -33,10 +33,9 @@ def error_catcher(func):
     return wrapper
 
 
-@error_catcher
+@explain_errors
 def get_schoolkid(full_name: str) -> Schoolkid:
-    """
-    Поиск учетной записи.
+    """Поиск учетной записи.
 
     :param full_name: ФИО ученика
     :return Schoolkid:
@@ -44,10 +43,9 @@ def get_schoolkid(full_name: str) -> Schoolkid:
     return Schoolkid.objects.get(full_name__contains=full_name)
 
 
-@error_catcher
+@explain_errors
 def fix_marks(schoolkid: Schoolkid):
-    """
-    Исправление всех плохих оценок на пятерки.
+    """Исправление всех плохих оценок на пятерки.
 
     :param schoolkid: модель ученика
     :return: no value
@@ -56,38 +54,30 @@ def fix_marks(schoolkid: Schoolkid):
     bad_points.update(points=5)
 
 
-@error_catcher
+@explain_errors
 def remove_chastisements(schoolkid: Schoolkid):
-    """
-    Удаление замечаний учителей.
+    """Удаление замечаний учителей.
 
     :param schoolkid: модель ученика
     :return: no value
     """
-    chastisements = Chastisement.objects.filter(schoolkid=schoolkid)
-    chastisements_count = chastisements.count()
-    chastisements.delete()
-    print(f'удалено {chastisements_count} объектов')
+    chastisements = Chastisement.objects.filter(schoolkid=schoolkid).delete()
+    print(f'удалено {chastisements[0]} объектов')
 
 
-@error_catcher
+@explain_errors
 def create_commendation(schoolkid: Schoolkid, subject='Математика'):
-    """
-    Создание похвалы.
+    """Создание похвалы.
 
     :param schoolkid: модель ученика
     :param subject: название предмета
     :return: no value
     """
-    lessons = Lesson.objects.filter(
+    lesson = Lesson.objects.filter(
         year_of_study=schoolkid.year_of_study,
         group_letter=schoolkid.group_letter,
         subject__title=subject,
-    ).order_by('date')
-
-    count_lessons = lessons.count()
-
-    lesson = lessons[random.randint(0, count_lessons)]
+    ).order_by('?').first()
 
     Commendation.objects.create(
         text=random.choice(all_commendations),

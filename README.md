@@ -36,6 +36,7 @@ full_name = 'Фролов Иван'
 schoolkid = find_schoolkid(child_name)
 remove_chastisements(schoolkid)
 ```
+
 - Создание похвалы.
 ```
 from scripts import find_schoolkid, create_commendation

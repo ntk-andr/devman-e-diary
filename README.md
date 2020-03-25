@@ -35,9 +35,10 @@ remove_chastisements(schoolkid)
 ```
 
 - Создание похвалы.
-```from scripts import find_schoolkid, create_commendation
+
+`from scripts import find_schoolkid, create_commendation
 full_name = 'Фролов Иван'
 schoolkid = find_schoolkid(child_name)
 create_commendation(schoolkid, 'Математика')
-```
+`
 
